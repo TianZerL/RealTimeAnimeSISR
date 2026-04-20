@@ -1,0 +1,110 @@
+# general settings
+name: ACNet_F8_B8_PReLU_ResLearn_RRRB
+model_type: AnimeSISRNetModel
+scale: 2
+num_gpu: 1  # set num_gpu: 0 for cpu mode
+manual_seed: 0
+
+# dataset and data loader settings
+datasets:
+  train:
+    name: AnimeSISRDatasetTrain
+    type: AnimeSISRDataset
+    dataroot_gt: D:/program/datasets/ModernAnimation1080_v3/cropped/images
+    image_mode: L # RGB, L
+
+    enable_rcas_sharpening: false
+    enable_usm_sharpening: false
+    opencl_pid: 0
+    opencl_did: 0
+
+    degrade_type: bicubic
+
+    # data loader
+    use_shuffle: true
+    persistent_workers: true
+    num_worker_per_gpu: 8
+    batch_size_per_gpu: 16
+    dataset_enlarge_ratio: 1
+    prefetch_mode: ~
+
+  val:
+    name: AnimeSISRDatasetVal
+    type: AnimeSISRDataset
+    dataroot_gt: D:/program/datasets/ModernAnimation1080_v3/valHR
+    image_mode: L
+
+    degrade_type: bicubic
+
+# network structures
+network_g:
+  type: ACNet
+  num_in_ch: 1
+  num_out_ch: 1
+  scale: 2
+  num_feat: 8
+  num_block: 8
+  rep_conv3x3_block_head_name: rrrb
+  rep_conv3x3_block_body_name: rrrb
+  rep_conv3x3_block_upscale_name: rrrb
+  activation_name: prelu
+  res_learning: true
+  use_deconv: false
+
+# path
+path:
+  pretrain_network_g: ~
+  strict_load_g: true
+  resume_state: ~
+
+# training settings
+train:
+  ema_decay: 0.999
+  optim_g:
+    type: Adam
+    lr: !!float 1e-3
+    weight_decay: 0
+    betas: [0.9, 0.99]
+
+  scheduler:
+    type: MultiStepLR
+    milestones: [50000, 100000, 150000, 200000, 250000]
+    gamma: 0.5
+
+  total_iter: 300000
+  warmup_iter: -1  # no warm up
+
+  # losses
+  pixel_opt:
+    type: L1Loss
+    loss_weight: 1.0
+    reduction: mean
+
+# validation settings
+val:
+  val_freq: !!float 10000
+  save_img: false
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 4
+      test_y_channel: true
+    ssim:
+      type: calculate_ssim
+      crop_border: 4
+      test_y_channel: true
+
+# logging settings
+logger:
+  print_freq: 1000
+  save_checkpoint_freq: !!float 10000
+  use_tb_logger: false
+  wandb:
+    project: ~
+    resume_id: ~
+
+# dist training settings
+dist_params:
+  backend: nccl
+  port: 29500

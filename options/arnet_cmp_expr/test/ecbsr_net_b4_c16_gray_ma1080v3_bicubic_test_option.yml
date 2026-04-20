@@ -1,0 +1,69 @@
+name: ECBSR_Net_B4_C16_GRAY_MA1080V3_BICUBIC_Test
+model_type: AnimeSISRNetModel
+scale: 2
+num_gpu: 1
+manual_seed: 0
+
+datasets:
+  test_1:
+    name: ModernAnimation1080_v3
+    type: AnimeSISRDataset
+    dataroot_gt: D:/program/datasets/ModernAnimation1080_v3/valHR
+    image_mode: L
+    degrade_type: bicubic
+
+  test_2:
+    name: ClassicAnimation
+    type: AnimeSISRDataset
+    dataroot_gt: D:/program/datasets/ClassicAnimation/HR_val
+    image_mode: L
+    degrade_type: bicubic
+
+  test_3:
+    name: ClassicAnimation_DNR
+    type: AnimeSISRDataset
+    dataroot_gt: D:/program/datasets/ClassicAnimation/DNR_val
+    image_mode: L
+    degrade_type: bicubic
+
+  test_4:
+    name: HFA2K
+    type: AnimeSISRDataset
+    dataroot_gt: D:/program/datasets/HFA2K
+    image_mode: L
+    degrade_type: bicubic
+
+  test_5:
+    name: FHD-Anime
+    type: AnimeSISRDataset
+    dataroot_gt: D:/program/datasets/FHD-Anime
+    image_mode: L
+    degrade_type: bicubic
+
+network_g:
+  type: ECBSR
+  num_in_ch: 1
+  num_out_ch: 1
+  num_block: 4
+  num_channel: 16
+  with_idt: false
+  act_type: prelu
+  scale: 2
+
+path:
+  pretrain_network_g: experiments/l1_trained_models/gray_ma1080v3_bicubic/ECBSR_B4C16.pth
+  param_key_g: params_ema
+  strict_load_g: true
+
+val:
+  save_img: false
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 4
+      test_y_channel: true
+    ssim:
+      type: calculate_ssim
+      crop_border: 4
+      test_y_channel: true

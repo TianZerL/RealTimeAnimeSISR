@@ -1,0 +1,10 @@
+animesisr-basicsr
+pillow
+pillow-heif
+numpy
+opencv-python
+pyopencl
+
+# you may want to install them by yourself
+torch
+torchvision
