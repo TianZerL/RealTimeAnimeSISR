@@ -141,3 +141,5 @@ dmypy.json
 
 *.exe
 *.pth
+*.zip
+*.7z
