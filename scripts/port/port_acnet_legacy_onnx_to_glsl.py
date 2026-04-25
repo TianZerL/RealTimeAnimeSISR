@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
     kernels, biases = get_onnx_weights_numpy(model, layout='hwcn')
 
-    model_name = f'ACNet Classic'
+    model_name = f'ACNet Legacy'
 
     glsl = ''
     factor = args.factor

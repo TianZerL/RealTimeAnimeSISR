@@ -64,7 +64,7 @@ class ACNet(torch.nn.Module):
         self.scale = scale
 
     @torch.no_grad()
-    def reparameterize(self): 
+    def reparameterize(self):
         rep_acnet = ACNet.__new__(ACNet)
         super(ACNet, rep_acnet).__init__()
 
@@ -112,7 +112,7 @@ class ACNet(torch.nn.Module):
         return out
 
 @ARCH_REGISTRY.register()
-class ACNet_Classic(ACNet):
+class ACNet_Legacy(ACNet):
     def __init__(self, num_in_ch=1, num_out_ch=1, scale=2, num_feat=8, num_block=8):
         super().__init__(
             num_in_ch=num_in_ch,
